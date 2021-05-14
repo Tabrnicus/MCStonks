@@ -54,4 +54,11 @@ public enum Sign {
 
     }
 
+    @Override
+    public String toString() {
+
+        return String.valueOf(this.value());
+
+    }
+
 }
