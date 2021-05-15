@@ -1,4 +1,4 @@
-package com.nchroniaris.mcstonks.stock;
+package com.nchroniaris.mcstonks.model;
 
 /**
  * This mostly exists so that I can "enforce" an int to be a sign (+/-) such that you can do something like {@code mySign.value() * 10} and get either +10 or -10. This class is by all accounts, immutable.

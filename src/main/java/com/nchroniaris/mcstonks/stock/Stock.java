@@ -1,5 +1,7 @@
 package com.nchroniaris.mcstonks.stock;
 
+import com.nchroniaris.mcstonks.model.Sign;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
