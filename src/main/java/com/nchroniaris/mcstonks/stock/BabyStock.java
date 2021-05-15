@@ -42,8 +42,8 @@ public class BabyStock extends Stock {
         super(price, signVector, bankrupt);
 
         // We only use 2 signs out of the sign vector, so we make sure that this is true. If the caller provides a shorter or longer one than this would male no sense.
-        if (signVector.size() != 2)
-            throw new IllegalArgumentException("The baby stock must have exactly 2 elements in its sign vector!");
+        if (signVector.size() != BabyStock.DEFAULT_SIGN_VECTOR.size())
+            throw new IllegalArgumentException(String.format("The baby stock must have exactly %d elements in its sign vector!", BabyStock.DEFAULT_SIGN_VECTOR.size()));
 
         // failureLevel cannot be less than 0 or more than MAX_FAILURE_LEVEL + 1. The +1 allows room for detecting when the stock has finished its failure cycle.
         if (failureLevel < 0 || failureLevel > BabyStock.MAX_FAILURE_LEVEL + 1)
@@ -81,12 +81,12 @@ public class BabyStock extends Stock {
 
             new value =
 
-                max (0.1,
+                max (0.25,
 
                      old value
-                   + (80% to have the same sign) * (uniformly choose in [1.5, 3])                              [green term]
-                   + (80% to have the same sign) * (uniformly choose in [1.5, 2])                              [blue term]
-                   + (5% chance to be included) * (50% to be negative sign) * (uniformly choose in [5, 15])    [red term]
+                   + ( 80% to have the same sign ) * ( uniformly choose in [1.5, 3) )
+                   + ( 80% to have the same sign ) * ( uniformly choose in [1.5, 2) )
+                   + ( 5% chance to be included ) * ( 50% to be negative sign ) * ( uniformly choose in [5, 15) )
 
                 )
          */
@@ -123,16 +123,16 @@ public class BabyStock extends Stock {
             if (this.random.nextFloat() <= 0.20f)
                 this.signVector.set(i, this.signVector.get(i).negative());
 
-        // newPrice += (80% chance to have the same sign) (+/-) * uniform random in [1.5, 3]
+        // newPrice += (80% chance to have the same sign) (+/-) * uniform random in [1.5, 3)
         this.price += this.signVector.get(0).value() * this.uniformRandom(1.5f, 3.0f);
 
-        // newPrice += (80% chance to have the same sign) (+/-) * uniform random in [1.5, 2]
+        // newPrice += (80% chance to have the same sign) (+/-) * uniform random in [1.5, 2)
         this.price += this.signVector.get(1).value() * this.uniformRandom(1.5f, 2.0f);
 
         // 5% chance for the following modifications to be included
         if (this.random.nextFloat() <= 0.05f) {
 
-            // newPrice += (50% chance to be pos/neg) (+/-) * uniform random in [5, 15]
+            // newPrice += (50% chance to be pos/neg) (+/-) * uniform random in [5, 15)
             Sign sign = (this.random.nextFloat() <= 0.5f) ? Sign.POSITIVE : Sign.NEGATIVE;
             this.price += sign.value() * this.uniformRandom(5.0f, 15.0f);
 
@@ -145,7 +145,7 @@ public class BabyStock extends Stock {
         // -- Stock Failure Mechanics -- //
 
 
-        // If failureLevel is anything other than 0, then it gets an extra multiplicative modifier on the changes just applied. In other words, For every failureLevel increase, there is an increase by 0.04f. The `1 + ...` part is to ensure it's a multiplicative **increase**.
+        // If failureLevel is anything other than 0, then it gets an extra multiplicative modifier on the changes just applied. In other words, For every failureLevel increase, there is an increase by 0.04. The `1 + ...` part is to ensure it's a multiplicative **increase**.
         this.price *= (1 + this.failureLevel * 0.04f);
 
         // If the stock is actively failing (any number other than zero) increment the failure level for the next run. This must be done before the initial failureLevel from 0 to 1 or else it will double trigger. This could be combined with the conditional below but for the sake of readability, I won't.
