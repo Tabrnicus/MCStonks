@@ -11,6 +11,19 @@ import java.util.Random;
  */
 public abstract class Stock {
 
+    // Small data class that holds information about the state of a stock in one particular instance of time. Used for bulk returns, so that the caller can know when the stock has gone bankrupt, for example.
+    public static final class State {
+
+        public final float price;
+        public final boolean bankrupt;
+
+        public State(float price, boolean bankrupt) {
+            this.price = price;
+            this.bankrupt = bankrupt;
+        }
+
+    }
+
     // Minimum price a stock can go at any point. I chose 0.25f as its binary representation does not have any precision loss, which makes comparisons a little more deterministic.
     protected static final float MINIMUM_PRICE = 0.25f;
 
@@ -73,22 +86,24 @@ public abstract class Stock {
      * Advances the stock price {@code numberOfTimes} times based on the currently stored values
      *
      * @param numberOfTimes The number of times to advance the price.
-     * @return The calculated prices stored in a list, for convenience
+     * @return The effective state of the stock (up to price and bankruptcy), stored in a list for convenience. The length of the list will be exactly equal to {@code numberOfTimes}.
      */
-    public final List<Float> advance(int numberOfTimes) {
+    public final List<State> advance(int numberOfTimes) {
 
         // Argument checking
         if (numberOfTimes < 1)
             throw new IllegalArgumentException("You can't advance the price less than 1 time!");
 
-        List<Float> prices = new ArrayList<>();
+        List<State> states = new ArrayList<>();
 
         // this.advance should store its updated values back to itself, so a subsequent call should work without doing anything special
-        for (int i = 0; i < numberOfTimes; i++)
-            prices.add(this.advance());
+        for (int i = 0; i < numberOfTimes; i++) {
+            this.advance();
+            states.add(new State(this.getPrice(), this.isBankrupt()));
+        }
 
         // The current price should be stored to the instance variable
-        return prices;
+        return states;
 
     }
 
