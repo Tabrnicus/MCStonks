@@ -121,7 +121,8 @@ public class MemeStock extends Stock {
             this.strikes = 0;
 
             // The stock is bankrupt so there is no reason to update anything for this cycle, which is why we return.
-            return Stock.MINIMUM_PRICE;
+            this.price = Stock.MINIMUM_PRICE;
+            return this.price;
 
         }
 
