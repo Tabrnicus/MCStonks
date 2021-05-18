@@ -28,10 +28,10 @@ public class RiskyStock extends Stock {
     }
 
     /**
-     * Constructs a BabyStock with the given values.
+     * Constructs a RiskyStock with the given values.
      *
      * @param price        Initial price of the stock
-     * @param signVector   A (length 2) List of {@link Sign}s that indicate the initial value of the signs
+     * @param signVector   A (length 3) List of {@link Sign}s that indicate the initial value of the signs
      * @param bankrupt     Whether the stock is currently bankrupt
      * @param failureLevel The failure level of this stock. Ranges from 0 to MAX_FAILURE_LEVEL
      */
@@ -42,7 +42,7 @@ public class RiskyStock extends Stock {
 
         // We only use 3 signs out of the sign vector, so we make sure that this is true. If the caller provides a shorter or longer one than this would male no sense.
         if (signVector.size() != RiskyStock.DEFAULT_SIGN_VECTOR.size())
-            throw new IllegalArgumentException(String.format("The baby stock must have exactly %d elements in its sign vector!", RiskyStock.DEFAULT_SIGN_VECTOR.size()));
+            throw new IllegalArgumentException(String.format("The risky stock must have exactly %d elements in its sign vector!", RiskyStock.DEFAULT_SIGN_VECTOR.size()));
 
         // failureLevel cannot be less than 0 or more than MAX_FAILURE_LEVEL + 1. The +1 allows room for detecting when the stock has finished its failure cycle.
         if (failureLevel < 0 || failureLevel > RiskyStock.MAX_FAILURE_LEVEL + 1)
