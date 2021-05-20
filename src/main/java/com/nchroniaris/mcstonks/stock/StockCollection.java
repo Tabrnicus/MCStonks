@@ -13,13 +13,18 @@ public class StockCollection {
     public final MemeStock memeStock;
 
     public StockCollection(BabyStock babyStock, RiskyStock riskyStock, MemeStock memeStock) {
+
+        if (babyStock == null || riskyStock == null || memeStock == null)
+            throw new IllegalArgumentException("None of babyStock, riskyStock, or memeStock can be null!");
+
         this.babyStock = babyStock;
         this.riskyStock = riskyStock;
         this.memeStock = memeStock;
     }
 
     /**
-     * Convenience method. Returns a ploymorphic representation of all the stocks in the collection. Any changes made to the mutable stocks will reflect in this collection.
+     * Convenience method. Returns a polymorphic representation of all the stocks in the collection. Any changes made to the mutable stocks will reflect in this collection.
+     *
      * @return A {@link List} of {@link Stock}s that the caller can advance.
      */
     public List<Stock> toList() {
