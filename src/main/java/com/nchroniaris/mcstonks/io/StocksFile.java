@@ -53,7 +53,7 @@ public class StocksFile {
             if (this.stocksFile.createNewFile()) {
 
                 // Write default values to the file
-                System.out.printf("Stocks file (%s) not found, creating...%n", this.stocksFile.getPath());
+                System.err.printf("WARNING: Stocks file (%s) not found, creating...%n", this.stocksFile.getPath());
                 this.writeCollection(new StockCollection(new BabyStock(), new RiskyStock(), new MemeStock()));
 
             }
