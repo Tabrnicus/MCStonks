@@ -2,6 +2,15 @@ plugins {
     id 'java'
 }
 
+group 'com.nchroniaris'
+version '1.0.0'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+// Different base name than the project root, for all artifacts
+archivesBaseName = 'mc-stonks'
+
 repositories {
     mavenCentral()
 }
@@ -26,8 +35,5 @@ jar {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
 
-    archiveFileName = 'mc-stonks.jar'
 }
 
-group 'com.nchroniaris'
-version '1.0.0'
