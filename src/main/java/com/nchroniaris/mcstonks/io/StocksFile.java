@@ -3,12 +3,11 @@ package com.nchroniaris.mcstonks.io;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import com.nchroniaris.mcstonks.io.adapter.SignAdapter;
 import com.nchroniaris.mcstonks.model.Sign;
-import com.nchroniaris.mcstonks.stock.BabyStock;
-import com.nchroniaris.mcstonks.stock.MemeStock;
-import com.nchroniaris.mcstonks.stock.RiskyStock;
-import com.nchroniaris.mcstonks.stock.StockCollection;
+import com.nchroniaris.mcstonks.stock.*;
 
 import java.io.*;
 
@@ -41,6 +40,7 @@ public class StocksFile {
         this.gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .registerTypeAdapter(Sign.class, new SignAdapter())
+                .registerTypeAdapterFactory(this.createStockTypeAdapterFactory())
                 .create();
 
         // If the given path is a directory, convert the File object such that it points to the default filename, in that given directory
@@ -64,6 +64,20 @@ public class StocksFile {
             throw new IllegalArgumentException(String.format("The given path (%s) is not a valid file nor a valid directory!", pathName));
 
         }
+
+    }
+
+    /**
+     * Constructs a {@link RuntimeTypeAdapterFactory} for use in the method {@link GsonBuilder#registerTypeAdapterFactory(TypeAdapterFactory)}. This factory registers all the subtypes of {@link Stock} so that they can be serialized/deserialized properly.
+     *
+     * @return A {@link RuntimeTypeAdapterFactory} defining {@link Stock} and its subclasses.
+     */
+    private TypeAdapterFactory createStockTypeAdapterFactory() {
+
+        return RuntimeTypeAdapterFactory.of(Stock.class, "stockType")
+                .registerSubtype(BabyStock.class)
+                .registerSubtype(RiskyStock.class)
+                .registerSubtype(MemeStock.class);
 
     }
 
@@ -100,8 +114,6 @@ public class StocksFile {
         // If anything *else* goes wrong, execution will stop here.
         if (collection == null)
             throw new IllegalStateException(String.format("Something else went wrong parsing the file (%s). It is likely corrupted, so I would suggest you delete the file and try again.", this.stocksFile.getPath()));
-
-
 
         return collection;
 
