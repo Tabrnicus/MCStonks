@@ -89,18 +89,19 @@ public class StocksFile {
 
         } catch (IOException e) {
 
-            e.printStackTrace();
-            System.exit(1);
+            throw new IllegalStateException(String.format("There was an issue opening the file (%s). It is likely corrupted, so I would suggest you delete the file and try again.", this.stocksFile.getPath()));
 
         } catch (JsonParseException e) {
 
-            e.printStackTrace();
+            throw new IllegalStateException(String.format("The file (%s) contains JSON that is not parsable by this program. It is likely corrupted, so I would suggest you delete the file and try again.", this.stocksFile.getPath()));
 
         }
 
-        // If anything goes wrong with the JSON parsing, execution will stop here.
+        // If anything *else* goes wrong, execution will stop here.
         if (collection == null)
-            throw new IllegalStateException(String.format("The file (%s) contains JSON that is not parsable by this program. It is likely corrupted, so I would suggest you delete the file and try again.", this.stocksFile.getPath()));
+            throw new IllegalStateException(String.format("Something else went wrong parsing the file (%s). It is likely corrupted, so I would suggest you delete the file and try again.", this.stocksFile.getPath()));
+
+
 
         return collection;
 
