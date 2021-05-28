@@ -4,6 +4,7 @@ import com.nchroniaris.mcstonks.model.Sign;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public class MemeStock extends Stock {
 
@@ -27,7 +28,7 @@ public class MemeStock extends Stock {
     public MemeStock() {
 
         // Use parameterized constructor, and input default values. We set bankrupt/failing to false and strikes to 0 because we assume that it is NOT bankrupt and has no strikes to begin with.
-        this(MemeStock.DEFAULT_PRICE, MemeStock.DEFAULT_SIGN_VECTOR, false, false, 0);
+        this(MemeStock.DEFAULT_PRICE, MemeStock.DEFAULT_SIGN_VECTOR, false, null, false, 0);
 
     }
 
@@ -40,10 +41,10 @@ public class MemeStock extends Stock {
      * @param failing    Whether the stock is currently failing. The stock cannot be failing if it is bankrupt.
      * @param strikes    The number of current strikes. Ranges from 0 to MAX_STRIKES
      */
-    public MemeStock(float price, List<Sign> signVector, boolean bankrupt, boolean failing, int strikes) {
+    public MemeStock(float price, List<Sign> signVector, boolean bankrupt, UUID stockUUID, boolean failing, int strikes) {
 
         // This initializes the three common properties. Remember that this constructor is called when stocks are in the middle of their overall lifetime (as opposed to setting up new ones /w default values), which can include bankruptcy.
-        super(price, signVector, bankrupt);
+        super(price, signVector, bankrupt, stockUUID);
 
         // We only use 2 signs (see note in static declaration) out of the sign vector, so we make sure that this is true. If the caller provides a shorter or longer one than this would male no sense.
         if (signVector.size() != MemeStock.DEFAULT_SIGN_VECTOR.size())

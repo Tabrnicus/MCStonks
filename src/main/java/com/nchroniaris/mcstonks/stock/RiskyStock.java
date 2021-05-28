@@ -4,6 +4,7 @@ import com.nchroniaris.mcstonks.model.Sign;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public class RiskyStock extends Stock {
 
@@ -23,7 +24,7 @@ public class RiskyStock extends Stock {
     public RiskyStock() {
 
         // Use parameterized constructor, and input default values. We set bankrupt to false and failureLevel to 0 because we assume that it is NOT failing, to begin with.
-        this(RiskyStock.DEFAULT_PRICE, RiskyStock.DEFAULT_SIGN_VECTOR, false, 0);
+        this(RiskyStock.DEFAULT_PRICE, RiskyStock.DEFAULT_SIGN_VECTOR, false, null, 0);
 
     }
 
@@ -35,10 +36,10 @@ public class RiskyStock extends Stock {
      * @param bankrupt     Whether the stock is currently bankrupt
      * @param failureLevel The failure level of this stock. Ranges from 0 to MAX_FAILURE_LEVEL
      */
-    public RiskyStock(float price, List<Sign> signVector, boolean bankrupt, int failureLevel) {
+    public RiskyStock(float price, List<Sign> signVector, boolean bankrupt, UUID stockUUID, int failureLevel) {
 
         // This initializes the three common properties. Remember that this constructor is called when stocks are in the middle of their overall lifetime (as opposed to setting up new ones /w default values), which can include bankruptcy.
-        super(price, signVector, bankrupt);
+        super(price, signVector, bankrupt, stockUUID);
 
         // We only use 3 signs out of the sign vector, so we make sure that this is true. If the caller provides a shorter or longer one than this would male no sense.
         if (signVector.size() != RiskyStock.DEFAULT_SIGN_VECTOR.size())

@@ -1,10 +1,12 @@
 package com.nchroniaris.mcstonks.stock;
 
 import com.nchroniaris.mcstonks.model.Sign;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 /**
  * Represents a common "stock" that can have its price advanced
@@ -34,11 +36,21 @@ public abstract class Stock {
     // Used for bankruptcy mechanics. The implementing class may or may not use this field to declare itself bankrupt (under its own conditions). In other words, this is a semi-optional field (a stock may choose to never go bankrupt, for example)
     protected boolean bankrupt;
 
+    // A UUID of the stock in order to differentiate it from a stock of the same type
+    protected UUID stockUUID;
+
     // Random number generator. All stocks have some random component, so it's efficient to store it in a field. Excluded from serialization.
     protected transient final Random random;
 
-    // Constructor for all the common properties of a stock
-    public Stock(float price, List<Sign> signVector, boolean bankrupt) {
+    /**
+     * Main constructor for all the common properties of a stock
+     *
+     * @param price      The price of the stock, as a {@code float}
+     * @param signVector A list of {@link Sign}s, used internally to advance the price.
+     * @param bankrupt   Whether the stock is bankrupt or not
+     * @param stockUUID  The UUID of the stock. <b>This can be null, which will cause the stock to generate a random one.</b> This is used to differentiate stocks who are of the same type (i.e. two baby stocks)
+     */
+    public Stock(float price, List<Sign> signVector, boolean bankrupt, @Nullable UUID stockUUID) {
 
         // We double check the price to make sure it's not below our bound
         if (price < Stock.MINIMUM_PRICE)
@@ -49,6 +61,12 @@ public abstract class Stock {
         this.signVector = new ArrayList<>(signVector);
 
         this.bankrupt = bankrupt;
+
+        // If UUID is null, generate a new one. If not, put in what we got. The effect here is that
+        if (stockUUID == null)
+            this.stockUUID = UUID.randomUUID();
+        else
+            this.stockUUID = stockUUID;
 
         // Initialize (and seed) random number generator. Since every instance of a stock will have its own instance of a RNG, they will never influence each other.
         this.random = new Random();
@@ -128,4 +146,16 @@ public abstract class Stock {
         return bankrupt;
 
     }
+
+    /**
+     * Gets the stock's UUID. Use this to identify a particular stock from a collection of many.
+     *
+     * @return A {@link UUID} that represents the stock.
+     */
+    public final UUID getStockUUID() {
+
+        return this.stockUUID;
+
+    }
+
 }
