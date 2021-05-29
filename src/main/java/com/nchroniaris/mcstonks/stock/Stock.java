@@ -148,11 +148,11 @@ public abstract class Stock {
     }
 
     /**
-     * Gets the stock's UUID. Use this to identify a particular stock from a collection of many.
+     * Gets the stock's UUID. Use this to identify a particular stock from a collection of many (especially of the same subtype).
      *
      * @return A {@link UUID} that represents the stock.
      */
-    public final UUID getStockUUID() {
+    public final UUID getUUID() {
 
         return this.stockUUID;
 
