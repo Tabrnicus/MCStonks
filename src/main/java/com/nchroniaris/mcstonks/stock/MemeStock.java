@@ -40,6 +40,7 @@ public class MemeStock extends Stock {
      * @param bankrupt   Whether the stock is currently bankrupt. The stock cannot be bankrupt if it is failing.
      * @param failing    Whether the stock is currently failing. The stock cannot be failing if it is bankrupt.
      * @param strikes    The number of current strikes. Ranges from 0 to MAX_STRIKES
+     * @param stockUUID  The UUID of the stock. <b>This can be null, which will cause the stock to generate a random one.</b>
      */
     public MemeStock(float price, List<Sign> signVector, boolean bankrupt, UUID stockUUID, boolean failing, int strikes) {
 

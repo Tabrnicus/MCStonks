@@ -38,6 +38,7 @@ public class BabyStock extends Stock {
      * @param signVector   A (length 2) List of {@link Sign}s that indicate the initial value of the signs
      * @param bankrupt     Whether the stock is currently bankrupt
      * @param failureLevel The failure level of this stock. Ranges from 0 to MAX_FAILURE_LEVEL
+     * @param stockUUID    The UUID of the stock. <b>This can be null, which will cause the stock to generate a random one.</b>
      */
     public BabyStock(float price, List<Sign> signVector, boolean bankrupt, UUID stockUUID, int failureLevel) {
 
