@@ -2,7 +2,8 @@ package com.nchroniaris.mcstonks.core;
 
 import com.nchroniaris.mcstonks.io.StocksFile;
 import com.nchroniaris.mcstonks.stock.Stock;
-import com.nchroniaris.mcstonks.stock.StockCollection;
+
+import java.util.List;
 
 public class MCStonks {
 
@@ -67,15 +68,15 @@ public class MCStonks {
 
         StocksFile stocksFile = new StocksFile(options.pathToStocksFile);
 
-        // Read stock data from file and store in a collection
-        StockCollection collection = stocksFile.readCollection();
+        // Read stock data from file and store in a list
+        List<Stock> stockList = stocksFile.readStocks();
 
         // Advance every stock one time only.
-        for (Stock stock : collection.toList())
+        for (Stock stock : stockList)
             stock.advance();
 
         // Recall that the above mutates the objects in StockCollection so we can just pass it back to be written to the same file -- all without any extra work.
-        stocksFile.writeCollection(collection);
+        stocksFile.writeStocks(stockList);
 
         if (!options.quiet)
             System.out.println("Successfully advanced all stocks by one iteration.");

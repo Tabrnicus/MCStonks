@@ -4,12 +4,19 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.google.gson.TypeAdapterFactory;
+import com.google.gson.reflect.TypeToken;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import com.nchroniaris.mcstonks.io.adapter.SignAdapter;
 import com.nchroniaris.mcstonks.model.Sign;
-import com.nchroniaris.mcstonks.stock.*;
+import com.nchroniaris.mcstonks.stock.BabyStock;
+import com.nchroniaris.mcstonks.stock.MemeStock;
+import com.nchroniaris.mcstonks.stock.RiskyStock;
+import com.nchroniaris.mcstonks.stock.Stock;
 
 import java.io.*;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class is the main way to read/write data from the main stocks file. This file stores the values of each stock, used to advance the price further.
@@ -18,6 +25,9 @@ public class StocksFile {
 
     // Default filename, used in the case that a folder (not file) is provided
     private static final String DEFAULT_FILENAME = "stonks.json";
+
+    // Represents the Type of a List<Stock> using the static getParameterized() method. This is to get around the fact that you cannot represent a generic type in Java.
+    private static final Type TYPE_LIST_STOCK = TypeToken.getParameterized(List.class, Stock.class).getType();
 
     private File stocksFile;
 
@@ -54,7 +64,7 @@ public class StocksFile {
 
                 // Write default values to the file
                 System.err.printf("WARNING: Stocks file (%s) not found, creating...%n", this.stocksFile.getPath());
-                this.writeCollection(new StockCollection(new BabyStock(), new RiskyStock(), new MemeStock()));
+                this.writeStocks(StocksFile.createDefaultStockList());
 
             }
 
@@ -64,6 +74,23 @@ public class StocksFile {
             throw new IllegalArgumentException(String.format("The given path (%s) is not a valid file nor a valid directory!", pathName));
 
         }
+
+    }
+
+    /**
+     * Constructs a {@code List<Stock>} that represents the default collection of stocks when no data is otherwise present
+     *
+     * @return Default collection of stocks, in a {@code List<Stock>}.
+     */
+    private static List<Stock> createDefaultStockList() {
+
+        List<Stock> stockList = new ArrayList<>();
+
+        stockList.add(new BabyStock());
+        stockList.add(new RiskyStock());
+        stockList.add(new MemeStock());
+
+        return stockList;
 
     }
 
@@ -82,20 +109,19 @@ public class StocksFile {
     }
 
     /**
-     * Reads the stock data from the file and returns it as a {@link StockCollection}. This object is meant to be mutated and passed back to this class's {@link #writeCollection(StockCollection)}.
-     * <b>Be warned, in a future release this will likely return a {@code List<Stock>} and StockCollection will be deprecated.</b>
+     * Reads the stock data from the file and returns it as a {@code List<Stock>}. This object is meant to be mutated and passed back to this class's {@link #writeStocks(List)}.
      *
-     * @return A {@link StockCollection} that has as members, the data of all the stocks from this file.
+     * @return A {@code List<Stock>} that has as elements, the data of all the stocks from this file.
      */
-    public StockCollection readCollection() {
+    public List<Stock> readStocks() {
 
-        StockCollection collection = null;
+        List<Stock> stockList = null;
 
         // Trying to open file set in the constructor as a reader
         try (BufferedReader json = new BufferedReader(new FileReader(this.stocksFile))) {
 
-            // Ask Gson to parse the json file as a StockCollection class. This will return null if it is somehow invalid.
-            collection = this.gson.fromJson(json, StockCollection.class);
+            // Ask Gson to parse the json file as a list of Stocks, using the TypeToken defined above. This will return null if it is somehow invalid.
+            stockList = this.gson.fromJson(json, StocksFile.TYPE_LIST_STOCK);
 
         } catch (FileNotFoundException e) {
 
@@ -112,25 +138,25 @@ public class StocksFile {
         }
 
         // If anything *else* goes wrong, execution will stop here.
-        if (collection == null)
+        if (stockList == null)
             throw new IllegalStateException(String.format("Something else went wrong parsing the file (%s). It is likely corrupted, so I would suggest you delete the file and try again.", this.stocksFile.getPath()));
 
-        return collection;
+        return stockList;
 
     }
 
     /**
-     * Writes the passed in {@link StockCollection} to the stocks file, overwriting any previous values stored there.
+     * Writes the passed in {@code List<Stock>} to the stocks file, overwriting any previous values stored there.
      *
-     * @param collection A valid {@link StockCollection}
+     * @param stockList A valid {@code List<Stock>}. The order that stocks occur in this list will not really matter that much because firstly the entire file is overwritten and secondly a user of this "API" should use {@link Stock#getUUID()} to identify a stock, not the order.
      */
-    public void writeCollection(StockCollection collection) {
+    public void writeStocks(List<Stock> stockList) {
 
         // Try to open file set in the constructor as a writer
         try (BufferedWriter json = new BufferedWriter(new FileWriter(this.stocksFile))) {
 
-            // Write to the file the contents of the serialized StockCollection object.
-            json.write(this.gson.toJson(collection));
+            // We specify the parameterized type here because of type erasure (I think). For some reason without it Gson doesn't realize that this is a List<Stock> and never invokes the RuntimeTypeAdapterFactory we defined beforehand.
+            json.write(this.gson.toJson(stockList, StocksFile.TYPE_LIST_STOCK));
 
         } catch (IOException e) {
 
