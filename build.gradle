@@ -47,13 +47,9 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
-jar {
+task fatJar(type: Jar, dependsOn: classes) {
 
-    manifest {
-        attributes(
-                'Main-Class': 'com.nchroniaris.mcstonks.core.Main'
-        )
-    }
+    archiveClassifier.set('FAT')
 
     // https://stackoverflow.com/a/49284432
     // As far as I understand this creates a jar file with all the dependencies included in it. Since this program is meant to be distributed and used as a standalone jar (Java is the only "dependency" required) I believe it is a reasonable solution.
@@ -63,8 +59,18 @@ jar {
 
 }
 
+// Make the manifest the same across all jar tasks
+allprojects {
+    tasks.withType(Jar) {
+        manifest {
+            attributes(
+                    'Main-Class': 'com.nchroniaris.mcstonks.core.Main'
+            )
+        }
+    }
+}
+
 artifacts {
     archives sourcesJar
     archives javadocJar
 }
-
