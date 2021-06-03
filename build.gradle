@@ -37,6 +37,16 @@ dependencies {
     testImplementation group: 'junit', name: 'junit', version: '4.12'
 
 }
+
+// Make the manifest the same across all jar tasks
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'com.nchroniaris.mcstonks.core.Main'
+        )
+    }
+}
+
 task sourcesJar(type: Jar, dependsOn: classes) {
     archiveClassifier.set('sources')
     from sourceSets.main.allSource
@@ -51,23 +61,17 @@ task fatJar(type: Jar, dependsOn: classes) {
 
     archiveClassifier.set('FAT')
 
+    // Read jar manifest and set it as own
+    manifest.from jar.manifest
+
     // https://stackoverflow.com/a/49284432
     // As far as I understand this creates a jar file with all the dependencies included in it. Since this program is meant to be distributed and used as a standalone jar (Java is the only "dependency" required) I believe it is a reasonable solution.
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 
-}
+    with jar
 
-// Make the manifest the same across all jar tasks
-allprojects {
-    tasks.withType(Jar) {
-        manifest {
-            attributes(
-                    'Main-Class': 'com.nchroniaris.mcstonks.core.Main'
-            )
-        }
-    }
 }
 
 artifacts {
