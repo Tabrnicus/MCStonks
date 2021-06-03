@@ -3,6 +3,7 @@ package com.nchroniaris.mcstonks.core;
 import com.nchroniaris.mcstonks.io.StocksFile;
 import com.nchroniaris.mcstonks.stock.Stock;
 
+import java.nio.file.Path;
 import java.util.List;
 
 public class MCStonks {
@@ -13,7 +14,7 @@ public class MCStonks {
      */
     public static class Options {
 
-        public String pathToStocksFile;
+        public Path pathToStocksFile;
         public boolean quiet;
 
         /**

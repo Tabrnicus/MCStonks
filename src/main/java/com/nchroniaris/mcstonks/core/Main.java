@@ -1,11 +1,13 @@
 package com.nchroniaris.mcstonks.core;
 
+import java.nio.file.InvalidPathException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
 
-    public static final String USAGE_STRING = "java -jar mc-stonks.jar <path_to_stocks_file | path_to_folder> [-q | --quiet] [-h | --help]";
+    public static final String USAGE_STRING = "java -jar mc-stonks.jar [path_to_stocks_file | path_to_folder] [-q | --quiet] [-h | --help]";
 
     public static void main(String[] args) {
 
@@ -56,14 +58,23 @@ public class Main {
         }
 
         // Extract first (and only) positional argument
-        if (positionalArguments.isEmpty()) {
-            System.err.println("ERROR: You must provide a file/folder path! If you are not sure what to put, type '.' (current working directory)");
-            Main.printUsage();
-            return;
-        }
+        try {
 
-        // Remove head and set appropriate string
-        options.pathToStocksFile = positionalArguments.remove(0);
+            // Remove head and set appropriate path from string.
+            options.pathToStocksFile = Paths.get(positionalArguments.remove(0));
+
+        } catch (IndexOutOfBoundsException e) {
+
+            // If there is no first positional argument we will set the path to null to indicate no user input.
+            options.pathToStocksFile = null;
+
+        } catch (InvalidPathException e) {
+
+            // InvalidPathException will be raised if applicable and should be descriptive enough on its own, but we print the usage string to supplement it.
+            Main.printUsage();
+            throw e;
+
+        }
 
         // Run program with options that we just set
         MCStonks mcStonks = new MCStonks(options);
