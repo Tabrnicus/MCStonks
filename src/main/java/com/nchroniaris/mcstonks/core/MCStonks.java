@@ -15,7 +15,7 @@ public class MCStonks {
     public static class Options {
 
         public Path pathToStocksFile;
-        public boolean quiet;
+        public boolean verbose;
 
         /**
          * Default constructor. Upon instantiation, it fills in the default values when those options are not provided.
@@ -24,7 +24,7 @@ public class MCStonks {
 
             // null meaning that it has not been provided. By contrast, anything other than null, including the empty string, is a provided value.
             this.pathToStocksFile = null;
-            this.quiet = false;
+            this.verbose = false;
 
         }
 
@@ -39,7 +39,7 @@ public class MCStonks {
                 throw new IllegalArgumentException("You cannot duplicate an instance of Options from a null object.");
 
             this.pathToStocksFile = options.pathToStocksFile;
-            this.quiet = options.quiet;
+            this.verbose = options.verbose;
 
         }
 
@@ -73,13 +73,19 @@ public class MCStonks {
         List<Stock> stockList = stocksFile.readStocks();
 
         // Advance every stock one time only.
-        for (Stock stock : stockList)
+        for (Stock stock : stockList) {
+
+            if (this.options.verbose)
+                System.out.printf("Read stock from file:%n\tUUID:  %s%n\ttype:  %s%n\tprice: %.2f%n%n", stock.getUUID().toString(), stock.getClass().getSimpleName(), stock.getPrice());
+
             stock.advance();
+
+        }
 
         // Recall that the above mutates the objects in StockCollection so we can just pass it back to be written to the same file -- all without any extra work.
         stocksFile.writeStocks(stockList);
 
-        if (!options.quiet)
+        if (this.options.verbose)
             System.out.println("Successfully advanced all stocks by one iteration.");
 
     }

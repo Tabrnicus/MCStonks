@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Main {
 
-    public static final String USAGE_STRING = "java -jar mc-stonks.jar [path_to_stocks_file | path_to_folder] [-q | --quiet] [-h | --help]";
+    public static final String USAGE_STRING = "java -jar mc-stonks.jar [path_to_stocks_file | path_to_folder] [-v | --verbose] [-h | --help]";
 
     public static void main(String[] args) {
 
@@ -33,9 +33,9 @@ public class Main {
                     Main.printHelp();
                     return;
 
-                case "-q":
-                case "--quiet":
-                    options.quiet = true;
+                case "-v":
+                case "--verbose":
+                    options.verbose = true;
                     break;
 
                 // TODO: 2021-05-20 add more arguments

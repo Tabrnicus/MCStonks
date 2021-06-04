@@ -15,7 +15,7 @@ One important detail is that each stock type supports bankruptcy. This means tha
 ## Installation
 To "install" this program, just download the built `.jar` from the [Releases Page](https://github.com/Tardnicus/mc-stonks/releases) or build from source.
 
-When using the binary, all you need is Java 8. All other libraries are precompiled in the `.jar` file. When building from source, you need to download the dependencies (but Gradle can do that for you). 
+When using the binary, all you need is Java 8. All other libraries are precompiled in the fat `.jar` file. When building from source, you need to download the dependencies (but Gradle can do that for you). 
 
 Other Java versions may work, but this was tested mainly on Java 8.
 
@@ -23,10 +23,10 @@ Other Java versions may work, but this was tested mainly on Java 8.
 This is a command line application. To use it, use the JRE in a shell:
 
 ```shell script
-java -jar mc-stonks.jar <path_to_stocks_file | path_to_folder> [-q | --quiet] [-h | --help ]
+java -jar mc-stonks.jar [ path_to_stocks_file | path_to_folder ] [ -v | --verbose ] [ -h | --help ]
 ```
 
-In plain english, run `java -jar mc-stonks.jar`, and provide it with one argument that is either the path to the file you want to create/update, or the parent folder where you want the file to be. Additionally, you may provide optional parameters `-h` and `-q`.
+In plain english, run `java -jar mc-stonks.jar`, and provide it with one argument that is either the path to the file you want to create/update, or the parent folder where you want the file to be. Additionally, you may provide optional parameters `-h` and `-v`.
 
 If used as part of a "stock market", it is suggested to run this to updates the prices once every hour or so.
 
@@ -36,17 +36,19 @@ The following options are available:
 | Option | Description |
 |--------|-------------|
 | `-h` or `--help`     | Displays the help screen
-| `-q` or `--quiet`    | Suppresses non-error output
+| `-v` or `--verbose`  | Suppresses non-error output
 
 ## Building from Source
-The project uses Gradle, and there's a custom task for building a fat `.jar` (has all the dependencies included in the file):
+The project uses Gradle, and there's a custom task for building a fat `.jar`, while the default task builds the rest of the jars (has all the dependencies included in the file):
 
 ```shell script
 # UNIX based OSs
-./gradlew jar
+./gradlew fatJar    # to build jar with all dependencies in it
+./gradlew build     # to build all the other jars (sources, javadoc, API) 
 
 # Windows
-gradlew.bat jar
+gradlew.bat fatJar
+gradlew.bat build
 ```
 
-The built `.jar` will be in `build/libs`.
+The built `.jar`(s) will be in `build/libs`.
