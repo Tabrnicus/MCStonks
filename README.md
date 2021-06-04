@@ -36,7 +36,7 @@ The following options are available:
 | Option | Description |
 |--------|-------------|
 | `-h` or `--help`     | Displays the help screen
-| `-v` or `--verbose`  | Suppresses non-error output
+| `-v` or `--verbose`  | Prints verbose logs to `stdout`
 
 ## Building from Source
 The project uses Gradle, and there's a custom task for building a fat `.jar`, while the default task builds the rest of the jars (has all the dependencies included in the file):

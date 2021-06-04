@@ -141,8 +141,8 @@ public class Main {
         System.out.println("\t\tShows this help menu");
         System.out.println();
 
-        System.out.println("\t-q, --quiet");
-        System.out.println("\t\tSuppresses all regular, non-error output");
+        System.out.println("\t-v, --verbose");
+        System.out.println("\t\tPrints verbose logs to stdout");
         System.out.println();
 
         // TODO: 2021-05-20 -a --add, -r --remove, -s --set, -l --list, -o --output
